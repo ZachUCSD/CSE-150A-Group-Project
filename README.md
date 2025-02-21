@@ -28,8 +28,22 @@ In addition to computing the log of the total purchases, we added a couple of ad
 ### What kind of agent is it? Goal based? Utility based? etc.
 Our agent is goal-based, and we want it to able to take in a CustomerID and return the kinds of purchases a customer may be interested in, including what items they may be interested in buying. 
 
+### High level overview of our agent
+
+Our agent operates by taking in raw retail transaction data and transforming it into meaningful features (such as the log-transformed total purchase, purchase frequency, and total items bought). It then uses these features to train a Hidden Markov Model (HMM) that identifies underlying temporal patterns in customer behavior (with time periods defined by months). In practice, the agent:
+
+- Preprocesses and cleans data (handling null values, encoding categorical variables, and transforming the target variable),
+- Trains a Gaussian HMM to capture latent purchasing patterns over time,
+- Uses the inferred hidden states to generate purchase recommendations tailored to individual customers.
+
+
+
 ### Why did you choose a Gaussian HMMM
 We chose a Gaussian HMM because our continuous TotalPurchase values are naturally modeled by Gaussian distributions, with each hidden state emitting data according to its own Gaussian parameters. This setup allows us to capture underlying transitions in purchasing behavior. Depending on the model’s accuracy, we may consider alternative approaches or adjustments to improve performance.
+
+### Technical Overview of Gaussian HMM
+A Gaussian HMM assumes that each hidden state generates observations according to a Gaussian (normal) distribution. Training this model is done using an Expectation-Maximization process. During the expectation step, the algorithm calculates forward and backward probabilities to estimate the likelihood of the model being in each hidden state at every time step. Then, in the maximization step, it updates the parameters: the state transition probabilities, the initial state distribution, and the Gaussian parameters (means/covariance matrices foreach state) to max the likelihood of the observed data. This goes on until the process converges, resulting in a model that captures the underlying patterns in our continuous purchase data.
+
 
 ### Describe how your agent is set up and where it fits in probabilistic modeling
 In the Jupyter Notebook, we develop the CustomerPurchaseAgent, designed to predict and influence customer purchasing behavior using Hidden Markov Models (HMMs) and probabilistic reasoning. The agent
