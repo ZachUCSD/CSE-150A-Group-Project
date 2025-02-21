@@ -28,7 +28,8 @@ In addition to computing the log of the total purchases, we added a couple of ad
 ### What kind of agent is it? Goal based? Utility based? etc.
 Our agent is goal-based, and we want it to able to take in a CustomerID and return the kinds of purchases a customer may be interested in, including what items they may be interested in buying. 
 
-
+### Why did you choose a Gaussian HMMM
+We chose a Gaussian HMM because our continuous TotalPurchase values are naturally modeled by Gaussian distributions, with each hidden state emitting data according to its own Gaussian parameters. This setup allows us to capture underlying transitions in purchasing behavior. Depending on the model’s accuracy, we may consider alternative approaches or adjustments to improve performance.
 
 ### Describe how your agent is set up and where it fits in probabilistic modeling
 In the Jupyter Notebook, we develop the CustomerPurchaseAgent, designed to predict and influence customer purchasing behavior using Hidden Markov Models (HMMs) and probabilistic reasoning. The agent
