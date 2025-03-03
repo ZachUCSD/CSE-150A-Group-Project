@@ -1,5 +1,9 @@
 # CSE 150A, Group Project – Milestone 2 Write-Up
 
+## Updates:
+The updates we have made to our ReadMe for Milestone 2 can be found in the ['High level overwiew of our agent' section](#update-high-level-overview-of-our-agent) and in the ['Model of Choice' section](#update-model-of-choice-). 
+
+
 ## Data Exploration
 The dataset contained 541909 rows and 6 columns representing the purchases made by customers of a UK-based and registered non-store online retail. This dataset has the following features.
 
@@ -12,15 +16,15 @@ The dataset contained 541909 rows and 6 columns representing the purchases made 
 
 From the summaries of the features it can be seen that Quantity and Unit Price have dramatic outliers; for this reason, when developing our Hidden Markov Model (HMM), we consider the logarithm of the total purchase. This is calculated by computing the total purchase price (quantity times unit price) and then rescaling by taking the logarithm. In doing so, we reduce the variability in the data (we are more equipped to deal with outliers), the model can be trained using more stable data through a smoother distribution of the data, and we maintain the relative ordering given by the purchases. It can also be seen that most of the purchases are made in the UK.
 
-## Data Cleaning
+## Data Cleaning <a id='data-cleaning-'></a>
 The data contained null values in Description as well as CustomerID so rows with either of them missing were dropped. Country was label-encoded to allow for numerical operations to be performed on it such as correlation matrices. We converted Invoice Date into a datetime object in order to create the hidden states to our model based on the months in which items were purchased. We originally planned to use the fiscal quarters, but we then realized that in order to consider more hidden states in our model, it made more sense to switch our time periods to months. 
 
 In addition to computing the log of the total purchases, we added a couple of additional columns to our main data frame: `PurchaseFrequency`, denotes the total number of purchases each customer has made, and `TotalItemsBought` has the total number of items bought by a particular customer. 
 
 ## Describe how your agent is set up and where it fits in probabilistic modeling
-Our Jupyter Notebook can be thought of being split into three sections: a data processing section (where the data is cleaned and appropriately organized - see the "Data Cleaning" section above), the CustomerPurchaseAgent class (which creates our agent), and the integration of the HMM section (which creates and develops the model, and then incorporates it for our agent's prediction capabilities). 
+Our Jupyter Notebook can be thought of being split into three sections: a data processing section (where the data is cleaned and appropriately organized - see the ['Data Cleaning' section](#data-cleaning-) section above), the CustomerPurchaseAgent class (which creates our agent), and the integration of the HMM section (which creates and develops the model, and then incorporates it for our agent's prediction capabilities). 
 
-### High level overview of our agent
+### UPDATE: High level overview of our agent<a id='update-high-level-overview-of-our-agent'></a>
 The main goal of our CustomerPurchaseAgent is to use past retail transaction data for a particular customer and be able to provide relevant recommendations for that customer's future purchasing activity based on probabilistic reasoning. Our agent takes in raw retail transactions and transforms those purchases into meaningful features (such as the log-transformed total purchase, the purchase frequency, and the total items bought). Our agent then uses a trained HMM that is trying to identify underlying temporal patterns in customer behavior; the time periods on which the model gets trained varies, although the two most effective ones are months or fiscal quarters (more on this a little later). Then, based on the trained model, the agent tries to influence the purchasing behavior of a given customer. In practice, the agent 
 * preprocesses and cleans customer data (i.e., handling null or missing values, normalizing key purhasing indicators, encoding categorical variables, transforming the target variables)
 * uses a trained Gaussian HMM model to predict the most likely hidden state for each customer's transactions as a means of capturing latent purchasing patterns over time,
@@ -42,12 +46,12 @@ Our agent is goal-based: we want it to able to take in a CustomerID and return t
 
 
 
-## Model of Choice
+## UPDATE: Model of Choice <a id='update-model-of-choice-'></a>
 
 ### Choice for a Gaussian HMMM
 We wanted to capture patterns in sequential transaction data for specific customers, so it made sense to use a Hidden Markov Model, in which observations are directly dependent upon a hidden state at a particular time. Since the total purchase values are naturally modeled by a Gaussian distribution,  we felt like it was reasonable to have our model of choice be a Gaussian Hidden Markov Model, or a Guassian HMM. Each hidden state's data is normally distributed with its own normal distribution, and this model innately assumes that observations (features like `LogTotalPurchase`, `PurchaseFrequency`, etc.) are normally distributed given each hidden state. 
 
-### Technical Overview of Gaussian HMM
+### Technical Overview of Gaussian HMM<a id='technical-overview-of-gaussian-hmm'></a>
 A Gaussian HMM assumes that each hidden state generates observations according to a Gaussian (normal) distribution. The training of the model involves an expectation-maximization (EM) process. During the expectation step, the algorithm calculates forward and backward probabilities to estimate the likelihood of the model being in each hidden state at every time step. Then, in the maximization step, it updates the parameters: the state transition probabilities, the initial state distribution, and the Gaussian parameters (means/covariance matrices for each state) to maximize the likelihood of the observed data. The model continues updating until the log-likelihood falls below a convergence threshold or the model has performed its maximum number of updating iterations. The result is a model that captures the underlying patterns in our continuous purchase data.
 
 In our implementation, we run the model by using the 
@@ -58,7 +62,7 @@ The `n_hidden_states` were generated based on the time periods we chose to run o
 
 
 
-### Evaluate your model
+### Evaluate your model<a id='evaluate-your-model'></a>
 Based on the features we have developed and trained our model on (i.e., log of total purchases, country of purchase, purchase frequency, and total items purchased), the model currently has roughly a 0.09 accuracy rate. This accuracy is particularly poor, and although it varies because our model is trained by looking at specific random samples of our data (instead of all of our data), it has consistenyl been between 0.07 and 0.10. 
 
 The predictions made by the agent given the trained HMM model are also particularly generic in that they do not really focus on the specific items a customer may want to purchase and instead propose recommendations for what customers should do in regards to future types of purchases. (Here, we define "type of purchases" to be categorized based on purchases for some particular set of circumstances. Those circumstances include "pre-holiday deals" or "summer discounts".) 
@@ -66,4 +70,4 @@ The predictions made by the agent given the trained HMM model are also particula
 
 
 ## Conclusions
-Our current CustomerPurchaseAgent works very poorly and does not accomplish the goals we want it to. In order to improve this model, we would like to optimize the code further as well as find additional datasets that would give us the information we need to take in a customerID and provide more specific item-based purchase recommendations (see some comments from the *Evaluate your model* section above). We are thinking to use either the descriptions of items or find a dataset that has better labels for item types for the recommendation system. We are also thinking about changing the type of HMM that we have been relying on since our Gaussian HMM assumes the observations are each normally distributed within each hidden state, which may not necessarily be the case (see comments in *Technical Overview of Gaussian HMM* section). Moreover, since we figured our covariance matrix would be "full", this model is quite computationally intensive. 
+Our current CustomerPurchaseAgent works very poorly and does not accomplish the goals we want it to. In order to improve this model, we would like to optimize the code further as well as find additional datasets that would give us the information we need to take in a customerID and provide more specific item-based purchase recommendations (see some comments from the ['Evaluate your model' section](#evaluate-your-model) section above). We are thinking to use either the descriptions of items or find a dataset that has better labels for item types for the recommendation system. We are also thinking about changing the type of HMM that we have been relying on since our Gaussian HMM assumes the observations are each normally distributed within each hidden state, which may not necessarily be the case (see comments in the ['Technical Overview of Gaussian HMM' section](#technical-overview-of-gaussian-hmm)). Moreover, since we figured our covariance matrix would be "full", this model is quite computationally intensive. 
