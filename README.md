@@ -188,9 +188,10 @@ The `n_hidden_states` were generated based on the time periods we chose to run o
 
 ## Results and Conclusions
 Using this discretized model improved performance somewhat, with the model being able to get an accuracy rate closer to 20%, although much less consistently than before. When testing only our Categorical HMM model, our best performance was just above 21% percent when it came to comparing the predicted hidden state sequence with the actual hidden state sequence, although there were results that could range anywhere from 7% to that best-performing 21%. The below images are from one such running of our model on the training data (80% of the original dataset, which contained just over 52,000 observations once the data had been cleaned and processed): 
-
+![dsitributions](./distributions.png)
+![stateDiagram](./stateDiagrams.png)
 As can be seen from the distribution, in particular, this running of the model was not able to generate a distribution that is quite close to the actual, true distribution of the states. However, the state distributon diagram (for the first 250 rows of the dataset) indicates a level of promise when it comes to mactching the model's predicted states with the hidden states from the observations. Even compared to a random state prediction algorithm, the results are not too dissimilar (disappointingly):
-
+![distributionsRandom](./distributions.random.png)
 Our agent, on the other hand, was not nearly as successful as we would have hoped. Here is an example of a sample output: 
 ```
 Customer ID: 14776.0
